@@ -1,0 +1,1 @@
+# beauty-platform-fe
