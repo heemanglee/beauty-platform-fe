@@ -1,53 +1,77 @@
-import { Sparkles } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
 import { getDefaultPathForRole } from '@/features/auth/lib/access-control';
 import { useAuthStore } from '@/store/auth-store';
+
+const navLinks = [
+  { label: 'Best Sellers', href: '/products' },
+  { label: 'New Arrivals', href: '/products' },
+  { label: 'Brands', href: '/products' },
+  { label: 'Skincare', href: '/products' },
+  { label: 'Wellness', href: '/products' },
+];
 
 export function Header() {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
-  const clearSession = useAuthStore((state) => state.clearSession);
-
-  const handleLogout = () => {
-    clearSession();
-    navigate('/login');
-  };
-
   return (
-    <header className="sticky top-0 z-20 border-b bg-white/90 backdrop-blur">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 lg:px-6">
+    <header className="fixed top-0 z-50 w-full bg-glow-surface/80 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-[1440px] items-center justify-between px-8 py-4">
         <Link
           to={user ? getDefaultPathForRole(user.role) : '/products'}
-          className="inline-flex items-center gap-2 text-lg font-semibold text-slate-900"
+          className="text-2xl font-bold uppercase tracking-tighter text-glow-on-surface font-jakarta"
         >
-          <span className="flex size-9 items-center justify-center rounded-2xl bg-brand-500 text-white shadow-soft">
-            <Sparkles className="size-5" />
-          </span>
-          Beauty Platform
+          GLOW CURATOR
         </Link>
 
-        <div className="flex items-center gap-3">
-          {user ? (
-            <>
-              <div className="hidden text-right sm:block">
-                <p className="text-sm font-medium text-slate-900">{user.name}</p>
-                <p className="text-xs uppercase tracking-[0.2em] text-slate-500">{user.role}</p>
-              </div>
-              <Button variant="secondary" onClick={handleLogout}>
-                로그아웃
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button asChild variant="ghost">
-                <Link to="/signup">회원가입</Link>
-              </Button>
-              <Button asChild>
-                <Link to="/login">로그인</Link>
-              </Button>
-            </>
-          )}
+        <nav className="hidden items-center gap-8 md:flex">
+          {navLinks.map((link, i) => (
+            <Link
+              key={link.label}
+              to={link.href}
+              className={`font-jakarta text-sm tracking-tight transition-colors duration-300 ${
+                i === 0
+                  ? 'border-b-2 border-glow-primary font-semibold text-glow-primary pb-1'
+                  : 'text-glow-on-surface-variant hover:text-glow-on-surface'
+              }`}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+
+        <div className="flex items-center gap-4">
+          <div className="hidden items-center rounded-full bg-glow-surface-container-highest/50 px-4 py-2 lg:flex">
+            <span className="material-symbols-outlined text-sm text-glow-on-surface-variant">search</span>
+            <input
+              type="text"
+              placeholder="Search curated beauty..."
+              className="w-48 border-none bg-transparent text-sm placeholder:text-glow-on-surface-variant/60 focus:outline-none focus:ring-0"
+            />
+          </div>
+
+          <button className="rounded-full p-2 transition-colors hover:bg-glow-surface-container-highest/50">
+            <span className="material-symbols-outlined text-glow-on-surface">favorite</span>
+          </button>
+
+          <button
+            onClick={() => {
+              if (user) {
+                navigate(getDefaultPathForRole(user.role));
+              } else {
+                navigate('/login');
+              }
+            }}
+            className="rounded-full p-2 transition-colors hover:bg-glow-surface-container-highest/50"
+          >
+            <span className="material-symbols-outlined text-glow-on-surface">person</span>
+          </button>
+
+          <button className="relative rounded-full p-2 transition-colors hover:bg-glow-surface-container-highest/50">
+            <span className="material-symbols-outlined text-glow-on-surface">shopping_bag</span>
+            <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-glow-secondary text-[10px] text-white">
+              0
+            </span>
+          </button>
         </div>
       </div>
     </header>
