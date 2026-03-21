@@ -44,4 +44,5 @@ docs/
 .omx/
 .omc/
 .agents/
+.claude/
 skills-lock.json
