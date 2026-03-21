@@ -35,9 +35,7 @@
 - Add tests for route guards, auth flows, and role-based UI changes when behavior changes.
 
 ## Commit & Pull Request Guidelines
-- When the user asks to commit changes, create a git commit, or mentions `/commit`, use the local `git-commit` skill.
-- `git-commit` skill core flow: inspect `git diff` / `git diff --staged` / `git status --porcelain`, stage files by logical work unit, then generate a concise commit message from the diff while honoring this repo's commit policy.
-- Never commit secrets, never skip hooks with `--no-verify` unless explicitly asked, and never force-push without explicit request.
+- Use Conventional Commits for every commit: `<type>[optional scope]: <description>`.
 - Use short, imperative commit subjects, e.g. `Add seller product route skeleton`.
 - Prefer structured commits with rationale and verification notes when changes are non-trivial.
 - PRs should include: summary, affected areas, verification evidence, and screenshots for UI changes.
