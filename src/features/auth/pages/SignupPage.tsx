@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { authService } from '@/features/auth/api/auth-service';
+import { ApiRequestError } from '@/lib/api/client';
 
 const signupSchema = z.object({
   name: z.string().min(1, '이름을 입력하세요.'),
@@ -24,6 +25,7 @@ export function SignupPage() {
   const navigate = useNavigate();
   const [successMessage, setSuccessMessage] = useState<string>();
   const [errorMessage, setErrorMessage] = useState<string>();
+  const [serverFieldErrors, setServerFieldErrors] = useState<Record<string, string[]>>({});
 
   const {
     register,
@@ -36,12 +38,16 @@ export function SignupPage() {
   const onSubmit = handleSubmit(async (values) => {
     setSuccessMessage(undefined);
     setErrorMessage(undefined);
+    setServerFieldErrors({});
 
     try {
       await authService.signup(values);
       setSuccessMessage('가입이 완료되었습니다. 로그인 페이지로 이동합니다.');
       window.setTimeout(() => navigate('/login'), 1000);
     } catch (error) {
+      if (error instanceof ApiRequestError && error.fieldErrors) {
+        setServerFieldErrors(error.fieldErrors);
+      }
       setErrorMessage(error instanceof Error ? error.message : '회원가입에 실패했습니다.');
     }
   });
@@ -71,7 +77,7 @@ export function SignupPage() {
               이메일
             </label>
             <Input id="email" type="email" placeholder="buyer@example.com" {...register('email')} />
-            <FormFieldError message={errors.email?.message} />
+            <FormFieldError message={errors.email?.message ?? serverFieldErrors.email?.[0]} />
           </div>
 
           <div className="sm:col-span-2">
@@ -87,7 +93,7 @@ export function SignupPage() {
               전화번호
             </label>
             <Input id="phoneNumber" placeholder="010-0000-0000" {...register('phoneNumber')} />
-            <FormFieldError message={errors.phoneNumber?.message} />
+            <FormFieldError message={errors.phoneNumber?.message ?? serverFieldErrors.phoneNumber?.[0]} />
           </div>
 
           <div>
